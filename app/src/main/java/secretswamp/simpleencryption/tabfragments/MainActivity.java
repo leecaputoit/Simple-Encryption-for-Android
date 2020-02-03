@@ -28,11 +28,18 @@ public class MainActivity extends AppCompatActivity {
 
     private ViewPager mViewPager;
 
+    private static Context appContext;
+
+    private static KeyStore applicationKeystore;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(secretswamp.simpleencryption.R.layout.activity_main);
         Log.d(TAG, "onCreate: Starting.");
+        appContext = getApplicationContext();
+        applicationKeystore = new KeyStore();
+        applicationKeystore.loadKeys();
 
         mSectionsPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
 
@@ -43,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(secretswamp.simpleencryption.R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        SharedPreferences sharedPref = getSharedPreferences("pref", Context.MODE_PRIVATE);
+        //SharedPreferences sharedPref = getSharedPreferences("pref", Context.MODE_PRIVATE);
         //checkSharedPreferences(sharedPref);
     }
 
@@ -56,6 +63,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    static Context getAppContext(){
+        return appContext;
+    }
+
+    static KeyStore getKeyStore(){
+        return applicationKeystore;
+    }
     /*
     private void checkSharedPreferences(SharedPreferences pref) {
         KeyPair kp = CryptUtils.generateKeyPair();

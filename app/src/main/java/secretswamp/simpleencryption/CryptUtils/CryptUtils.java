@@ -69,6 +69,9 @@ public class CryptUtils {
         try{
             // Split the data and encrypted secret key
             int splitIndex = encryptedMessage.indexOf(",");
+            if(splitIndex == -1){
+                return null;
+            }
             String encryptedSecretKey = encryptedMessage.substring(0, splitIndex);
             String base64EncryptedData= encryptedMessage.substring(splitIndex+1);
 

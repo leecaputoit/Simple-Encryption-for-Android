@@ -5,9 +5,11 @@ import javax.crypto.*;
 import java.io.*;
 import java.util.*;
 
+import android.Manifest;
 import android.content.Context;
 import android.util.Log;
 import android.app.Activity;
+import android.widget.Toast;
 
 //Author:Lee added for easy temp key storage without database
 
@@ -16,50 +18,47 @@ public class KeyStore{
     private PrivateKey myPrivateKey;
     private PublicKey myPublicKey;
     private Map<String,PublicKey> externalPublicKeys;
-    private static KeyStore general = new KeyStore();
 
-    private KeyStore(){
+    public KeyStore(){
         myPrivateKey = null;
         myPublicKey = null;
         externalPublicKeys = new HashMap<String,PublicKey>();
     }
 
-    public static KeyStore getKeyStoreInstance(){
-        return general;
-    }
-
-    public PrivateKey getMyPrivateKey(){
+    PrivateKey getMyPrivateKey(){
         return myPrivateKey;
     }
 
-    public PublicKey getMyPublicKey(){
+    PublicKey getMyPublicKey(){
         return myPublicKey;
     }
 
-    public PublicKey getPublicKeyFrom(String name){
+    PublicKey getPublicKeyFrom(String name){
         return externalPublicKeys.get(name);
     }
 
-    public void setMyPrivateKey(PrivateKey key){
+    void setMyPrivateKey(PrivateKey key){
         myPrivateKey = key;
     }
-    public void setMyPublicKey(PublicKey key){
+    void setMyPublicKey(PublicKey key){
         myPublicKey = key;
     }
-
-    public void addExternalPublicKey(String name,PublicKey key){
+    void addExternalPublicKey(String name,PublicKey key){
         externalPublicKeys.put(name,key);
     }
 
-    public void loadKeys(Context context){
+    boolean initialized(){
+        return myPrivateKey != null && myPublicKey != null;
+    }
+
+    void loadKeys(){
         ObjectInputStream input;
         String filename = "keyInfo.txt";
 
         try {
-            File inputFile = new File(context.getFilesDir().getAbsolutePath()+File.separator+filename);
-            if(!inputFile.exists()){
-                Log.v("FileNotFound","Creating new file at location");
-                inputFile.createNewFile();
+            File inputFile = new File(MainActivity.getAppContext().getFilesDir().getAbsolutePath()+File.separator+filename);
+            if(inputFile.createNewFile()){
+                Toast.makeText(MainActivity.getAppContext(), "FileNotFound:Creating new keyInfo file for key storage", Toast.LENGTH_SHORT).show();
                 return;
             }
             input = new ObjectInputStream(new FileInputStream(inputFile));
@@ -67,6 +66,7 @@ public class KeyStore{
             myPublicKey = (PublicKey) input.readObject();
             externalPublicKeys = (Map<String,PublicKey>) input.readObject();
             input.close();
+            Toast.makeText(MainActivity.getAppContext(), "Keys loaded from " + inputFile.getAbsolutePath(), Toast.LENGTH_SHORT).show();
         } catch (StreamCorruptedException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
@@ -78,15 +78,14 @@ public class KeyStore{
         }
     }
 
-    public void storeKeys(Context context) {
+    void storeKeys() {
         String filename = "keyInfo.txt";
-        ObjectOutput out = null;
+        ObjectOutput out;
 
         try {
-            File outFile = new File(context.getFilesDir().getAbsolutePath()+File.separator+filename);
-            if(!outFile.exists()){
-                Log.v("FileNotFound","Creating new file at location");
-                outFile.createNewFile();
+            File outFile = new File(MainActivity.getAppContext().getFilesDir().getAbsolutePath()+File.separator+filename);
+            if(outFile.createNewFile()){
+                Toast.makeText(MainActivity.getAppContext(), "FileNotFound:Creating new keyInfo file for key storage", Toast.LENGTH_SHORT).show();
             }
             out = new ObjectOutputStream(new FileOutputStream(outFile));
             out.writeObject(myPrivateKey);
@@ -100,4 +99,5 @@ public class KeyStore{
         }
 
     }
+
 }

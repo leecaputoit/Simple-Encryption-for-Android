@@ -24,4 +24,18 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/encryptedEditText"/>
 
+    <Button
+        android:id="@+id/clearButtonTab2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/btnTEST2"
+        android:text="Clear Input" />
+
+    <Button
+        android:id="@+id/copyButtonTab2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/outputEditText"
+        android:text="Copy to clipboard" />
+
 </RelativeLayout>
