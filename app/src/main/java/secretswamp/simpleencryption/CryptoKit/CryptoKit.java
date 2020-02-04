@@ -180,8 +180,7 @@ public class CryptoKit{
         RSAPublicKey key = (RSAPublicKey)userKey;
         String encodedPublicExponent = Base64.encodeToString(key.getPublicExponent().toByteArray(),Base64.DEFAULT);
         String encodedModulus = Base64.encodeToString(key.getModulus().toByteArray(),Base64.DEFAULT);
-        String encodedKey = Base64.encodeToString(key.getEncoded(),Base64.DEFAULT);
-        return encodedModulus + "," + encodedKey + "," + encodedPublicExponent;
+        return encodedModulus + "?"  + encodedPublicExponent;
     } 
 
 
@@ -189,13 +188,12 @@ public class CryptoKit{
         throws IllegalArgumentException,InvalidKeySpecException
     {
         try{
-            int firstComma = encryptedPublicKey.indexOf(",");
-            int lastComma = encryptedPublicKey.lastIndexOf(",");
-            if(firstComma == -1 || lastComma == -1){
+            int questionMark = encryptedPublicKey.indexOf("?");
+            if(questionMark == -1){
                 return null;
             }
-            byte[] publicExponent = Base64.decode(encryptedPublicKey.substring(lastComma+1),Base64.DEFAULT);
-            byte[] modulus = Base64.decode(encryptedPublicKey.substring(0,firstComma),Base64.DEFAULT);
+            byte[] publicExponent = Base64.decode(encryptedPublicKey.substring(questionMark+1),Base64.DEFAULT);
+            byte[] modulus = Base64.decode(encryptedPublicKey.substring(0,questionMark),Base64.DEFAULT);
             RSAPublicKeySpec keySpec = new RSAPublicKeySpec(new BigInteger(modulus),new BigInteger(publicExponent));
             KeyFactory factory = KeyFactory.getInstance("RSA");
             return factory.generatePublic(keySpec);
