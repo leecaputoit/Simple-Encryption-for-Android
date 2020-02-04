@@ -1,14 +1,9 @@
 package secretswamp.simpleencryption.tabfragments;
 
 import java.security.*;
-import javax.crypto.*;
 import java.io.*;
 import java.util.*;
 
-import android.Manifest;
-import android.content.Context;
-import android.util.Log;
-import android.app.Activity;
 import android.widget.Toast;
 
 //Author:Lee added for easy temp key storage without database

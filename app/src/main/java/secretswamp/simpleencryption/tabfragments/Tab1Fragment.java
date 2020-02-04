@@ -3,29 +3,25 @@ package secretswamp.simpleencryption.tabfragments;
 import android.content.ClipData;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.content.SharedPreferences;
 import android.util.Base64;
 
 import java.io.UnsupportedEncodingException;
 import java.security.KeyPair;
 
+import secretswamp.simpleencryption.CryptoKit.CryptoKit;
 import secretswamp.simpleencryption.R;
-import secretswamp.simpleencryption.CryptUtils.CryptUtils;
-import secretswamp.simpleencryption.tabfragments.MainActivity;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.content.ClipboardManager;
-
-import org.w3c.dom.Text;
 
 
 public class Tab1Fragment extends Fragment {
@@ -48,12 +44,8 @@ public class Tab1Fragment extends Fragment {
         //privateKeyEditText = (EditText) (view.findViewById(R.id.generatedPrivateKey));
         KeyStore keys = MainActivity.getKeyStore();
         if(keys.initialized()){
-            try{
                 copyButton.setVisibility(View.VISIBLE);
-                keyEditText.setText(new String(Base64.encode(keys.getMyPublicKey().getEncoded(), 0), "UTF-8"));
-            }catch(UnsupportedEncodingException e){
-                e.printStackTrace();
-            }
+                keyEditText.setText(CryptoKit.encodePublicKey(keys.getMyPublicKey()));
 
         }
 
@@ -74,24 +66,22 @@ public class Tab1Fragment extends Fragment {
 
     private void generateNewKeys(View view) {
         //SharedPreferences pref = getActivity().getSharedPreferences("pref", Context.MODE_PRIVATE);
-        KeyPair kp = CryptUtils.generateKeyPair();
+        KeyPair kp = CryptoKit.generateUserKeyPair();
         KeyStore keys = MainActivity.getKeyStore();
 
         keys.setMyPrivateKey(kp.getPrivate());
         keys.setMyPublicKey(kp.getPublic());
         keys.storeKeys();
+        String s = CryptoKit.encodePublicKey((keys.getMyPublicKey()));
+        Log.v("Bigasserror",s);
         //SharedPreferences.Editor editor = pref.edit();
         //editor.putString("pub-key", PGPUtils.encodePublic(kp.getPublic()));
         //editor.putString("priv-key", PGPUtils.encodePrivate(kp.getPrivate()));
-        try {
-            Toast curToast = Toast.makeText(getActivity(), "New KeyPair Generated", Toast.LENGTH_SHORT);
-            curToast.show();
-            keyEditText.setText(new String(Base64.encode(keys.getMyPublicKey().getEncoded(), 0), "UTF-8"));
-            copyButton.setVisibility(View.VISIBLE);
+        Toast curToast = Toast.makeText(getActivity(), "New KeyPair Generated", Toast.LENGTH_SHORT);
+        curToast.show();
+        keyEditText.setText(CryptoKit.encodePublicKey(keys.getMyPublicKey()));
 
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        copyButton.setVisibility(View.VISIBLE);
     }
 
     private void copyToClipBoard(){

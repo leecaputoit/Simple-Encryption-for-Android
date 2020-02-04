@@ -11,14 +11,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import secretswamp.simpleencryption.CryptUtils.CryptUtils;
+import secretswamp.simpleencryption.CryptoKit.CryptoKit;
 import secretswamp.simpleencryption.R;
-import secretswamp.simpleencryption.tabfragments.MainActivity;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
-import java.security.PublicKey;
 
 
 public class Tab3Fragment extends Fragment {
@@ -80,16 +77,18 @@ public class Tab3Fragment extends Fragment {
             encryptionKey = ((EditText) (getView().findViewById(R.id.pubkeytext))).getText().toString();
             userInput = ((EditText) (getView().findViewById(R.id.userinputtext))).getText().toString();
         } catch (NullPointerException e) {
+            System.exit(1);
             return;
         }
         if(userInput.length() != 0 && encryptionKey.length() != 0){
-            String encMessage = CryptUtils.encryptMessage(userInput,keys.getMyPublicKey() );
-            if(encMessage == null){
-                Toast.makeText((MainActivity.getAppContext()),"Please enter a valid encrypted message",Toast.LENGTH_SHORT).show();
-                return;
+            String encMessage = CryptoKit.encryptMessage(encryptionKey,userInput );
+            if(!CryptoKit.errorTable.containsKey(encMessage)){
+                Toast.makeText(getActivity(), "Encryption complete",Toast.LENGTH_SHORT).show();
+                ((EditText)getView().findViewById(R.id.outputtext)).setText(encMessage);
+            }else{
+                Toast.makeText(getActivity(), CryptoKit.errorTable.get(encMessage), Toast.LENGTH_SHORT).show();
             }
-            Toast.makeText(getActivity(), "Encryption complete",Toast.LENGTH_SHORT).show();
-            ((EditText)getView().findViewById(R.id.outputtext)).setText(encMessage);
+
         }else{
             Toast.makeText(getActivity(), "Missing either the key or the data",Toast.LENGTH_SHORT).show();
         }

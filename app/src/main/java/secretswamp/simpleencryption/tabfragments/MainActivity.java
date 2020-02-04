@@ -2,7 +2,6 @@ package secretswamp.simpleencryption.tabfragments;
 
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -10,15 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
-
-import secretswamp.simpleencryption.CryptUtils.CryptUtils;
-
-import java.security.KeyPair;
-
-import java.io.*;
-import java.security.*;
-import android.content.Context;
-import javax.crypto.*;
 
 public class MainActivity extends AppCompatActivity {
 
